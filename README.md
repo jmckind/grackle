@@ -1,3 +1,3 @@
 # grackle
 
-Cloud native toolkit for ingesting tweets.
+A simple cloud-native framework for ingesting and displaying tweets.
