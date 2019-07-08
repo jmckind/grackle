@@ -16,10 +16,31 @@ package grackle
 
 import (
 	"runtime"
+
+	"github.com/sirupsen/logrus"
 )
 
-// PrintVersion will log the current version.
-func PrintVersion() {
+const (
+	// EnvLogLevel is the log level environment variable.
+	EnvLogLevel = "GRK_LOG_LEVEL"
+)
+
+// newLogger will return a properly configured logger.
+func newLogger(level string) *logrus.Logger {
+	log := logrus.New()
+
+	// Allow override of logging level.
+	logLevel, err := logrus.ParseLevel(level)
+	if err == nil {
+		log.SetLevel(logLevel)
+	}
+
+	return log
+}
+
+// logVersion will log the current version.
+func logVersion(log *logrus.Logger) {
 	log.Debugf("Go Version: %s", runtime.Version())
 	log.Debugf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	log.Debugf("   Grackle: %s", Version)
 }

@@ -34,8 +34,8 @@ type RethinkdbOptions struct {
 	TLSConfig         *tls.Config
 }
 
-// ConnectRethinkDB will return a Session object for the given RethinkDB database options.
-func ConnectRethinkDB(opt *RethinkdbOptions) *r.Session {
+// connectRethinkDB will return a Session object for the given RethinkDB database options.
+func connectRethinkDB(opt *RethinkdbOptions) (*r.Session, error) {
 	rdbOpts := r.ConnectOpts{
 		Address:   fmt.Sprintf("%s:%s", opt.Host, opt.Port),
 		Database:  opt.Database,
@@ -46,17 +46,12 @@ func ConnectRethinkDB(opt *RethinkdbOptions) *r.Session {
 
 	session, err := r.Connect(rdbOpts)
 	if err != nil {
-		log.Fatalf("Unable to connect to database. %v", err)
+		return nil, err
 	}
 
-	err = r.DBCreate(opt.Database).Exec(session)
-	if err != nil {
-		log.Errorf("Unable to create database. %v", err)
-	}
+	// Ensure database and table are created.
+	_ = r.DBCreate(opt.Database).Exec(session)
+	_ = r.TableCreate("tweets").Exec(session)
 
-	err = r.TableCreate("tweets").Exec(session)
-	if err != nil {
-		log.Errorf("Unable to create table. %v", err)
-	}
-	return session
+	return session, nil
 }

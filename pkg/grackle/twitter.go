@@ -16,9 +16,8 @@ package grackle
 
 import (
 	"github.com/ChimeraCoder/anaconda"
+	"github.com/sirupsen/logrus"
 )
-
-var log = anaconda.BasicLogger
 
 // TwitterOptions stores data related to a Twitter connection.
 type TwitterOptions struct {
@@ -27,20 +26,47 @@ type TwitterOptions struct {
 	ConsumerKey    string
 	ConsumerSecret string
 	Track          []string
+	Logger         *logrusAnacondaLogger
 }
 
 // ConnectTwitterAPI will return a connection for the given Twitter options.
-func ConnectTwitterAPI(opt *TwitterOptions) *anaconda.TwitterApi {
+func connectTwitterAPI(opt *TwitterOptions) (*anaconda.TwitterApi, error) {
 	api := anaconda.NewTwitterApiWithCredentials(
 		opt.AccessToken,
 		opt.AccessSecret,
 		opt.ConsumerKey,
 		opt.ConsumerSecret,
 	)
-	api.Log = log
+	api.Log = *opt.Logger
 
 	if ok, err := api.VerifyCredentials(); !ok || err != nil {
-		log.Fatalf("Invalid credentials. %v", err)
+		return nil, err
 	}
-	return api
+	return api, nil
 }
+
+type logrusAnacondaLogger struct {
+	log *logrus.Logger
+}
+
+// NewLogrusAnacondaLogger constructs new logrusAnacondaLogger objects.
+func newLogrusAnacondaLogger(log *logrus.Logger) *logrusAnacondaLogger {
+	return &logrusAnacondaLogger{log: log}
+}
+
+func (l logrusAnacondaLogger) Fatal(items ...interface{})               { l.log.Fatal(items...) }
+func (l logrusAnacondaLogger) Fatalf(s string, items ...interface{})    { l.log.Fatalf(s, items...) }
+func (l logrusAnacondaLogger) Panic(items ...interface{})               { l.log.Panic(items...) }
+func (l logrusAnacondaLogger) Panicf(s string, items ...interface{})    { l.log.Panicf(s, items...) }
+func (l logrusAnacondaLogger) Critical(items ...interface{})            { l.log.Error(items...) }
+func (l logrusAnacondaLogger) Criticalf(s string, items ...interface{}) { l.log.Errorf(s, items...) }
+func (l logrusAnacondaLogger) Error(items ...interface{})               { l.log.Error(items...) }
+func (l logrusAnacondaLogger) Errorf(s string, items ...interface{})    { l.log.Errorf(s, items...) }
+func (l logrusAnacondaLogger) Warning(items ...interface{})             { l.log.Warn(items...) }
+func (l logrusAnacondaLogger) Warningf(s string, items ...interface{})  { l.log.Warnf(s, items...) }
+func (l logrusAnacondaLogger) Notice(items ...interface{})              { l.log.Info(items...) }
+func (l logrusAnacondaLogger) Noticef(s string, items ...interface{})   { l.log.Infof(s, items...) }
+func (l logrusAnacondaLogger) Info(items ...interface{})                { l.log.Info(items...) }
+func (l logrusAnacondaLogger) Infof(s string, items ...interface{})     { l.log.Infof(s, items...) }
+func (l logrusAnacondaLogger) Debug(items ...interface{})               { l.log.Debug(items...) }
+func (l logrusAnacondaLogger) Debugf(s string, items ...interface{})    { l.log.Debugf(s, items...) }
