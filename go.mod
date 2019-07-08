@@ -16,6 +16,8 @@ require (
 	github.com/prometheus/common v0.6.0
 	github.com/sirupsen/logrus v1.2.0
 	github.com/thedevsaddam/renderer v1.2.0
+	google.golang.org/appengine v1.6.1
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/rethinkdb/rethinkdb-go.v5 v5.0.1
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
