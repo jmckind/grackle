@@ -11,7 +11,7 @@ build-web:
 clean:
 	rm -fr build
 
-docker:
+docker-image:
 	docker build -t jmckind/grackle:latest .
 
 run-docker-grackle-web:
