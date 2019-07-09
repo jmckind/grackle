@@ -24,4 +24,4 @@ run-local-grackle-web:
 	go run cmd/grackle-web/main.go
 
 run-local-rethinkdb:
-	docker run -d -p 28015:28015 -p 29015:29015 -p 8080:8080 rethinkdb:latest
+	docker run -d -p 28015:28015 -p 29015:29015 -p 8080:8080 rethinkdb:2.3.6
