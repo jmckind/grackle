@@ -103,8 +103,8 @@ var (
 	// twitterTrack specifies the search terms to use for the Twitter stream.
 	twitterTrack = kingpin.Flag(
 		"twitter-track",
-		"Comma-delimited list of search terms for the Twitter stream. Overrides GRK_TWITTER_TWITTER_TRACK.",
-	).OverrideDefaultFromEnvar("GRK_TWITTER_TWITTER_TRACK").Required().String()
+		"Comma-delimited list of search terms for the Twitter stream. Overrides GRK_TWITTER_TRACK.",
+	).OverrideDefaultFromEnvar("GRK_TWITTER_TRACK").Required().String()
 )
 
 func main() {
