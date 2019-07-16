@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grackle-ingest
+  labels:
+    app: grackle
+    component: ingest
+    environment: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grackle
+      component: ingest
+      environment: demo
+  template:
+    metadata:
+      labels:
+        app: grackle
+        component: ingest
+        environment: demo
+    spec:
+      containers:
+      - name: grackle
+        image: jmckind/grackle:latest
+        command:
+          - /grackle-ingest
+        env:
+          - name: GRK_LOG_LEVEL
+            value: "debug"
+          - name: GRK_RETHINKDB_HOST
+            value: "grackle-rethinkdb"
+          - name: GRK_TWITTER_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: grackle-twitter-credentials
+                key: twitter-access-token
+          - name: GRK_TWITTER_ACCESS_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: grackle-twitter-credentials
+                key: twitter-access-secret
+          - name: GRK_TWITTER_CONSUMER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: grackle-twitter-credentials
+                key: twitter-consumer-key
+          - name: GRK_TWITTER_CONSUMER_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: grackle-twitter-credentials
+                key: twitter-consumer-secret
+          - name: GRK_TWITTER_TRACK
+            value: "washington"
+        resources: {}

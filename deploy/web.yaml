@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grackle-web
+  labels:
+    app: grackle
+    component: web
+    environment: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grackle
+      component: web
+      environment: demo
+  template:
+    metadata:
+      labels:
+        app: grackle
+        component: web
+        environment: demo
+    spec:
+      containers:
+      - name: grackle
+        image: jmckind/grackle:latest
+        command:
+          - /grackle-web
+        env:
+          - name: GRK_LOG_LEVEL
+            value: "debug"
+          - name: GRK_RETHINKDB_HOST
+            value: "grackle-rethinkdb"
+        resources: {}

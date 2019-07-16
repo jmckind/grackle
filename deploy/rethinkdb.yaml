@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grackle-rethinkdb
+  namespace: grackle
+  labels:
+    app: rethinkdb
+    cluster: grackle
+    environment: demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rethinkdb
+      cluster: grackle
+      environment: demo
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: rethinkdb
+        cluster: grackle
+        environment: demo
+    spec:
+      containers:
+      - name: rethinkdb
+        image: rethinkdb:2.3.6
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grackle-rethinkdb
+  namespace: grackle
+  labels:
+    app: rethinkdb
+    cluster: grackle
+    environment: demo
+spec:
+  type: ClusterIP
+  selector:
+    app: rethinkdb
+    cluster: grackle
+    environment: demo
+  ports:
+  - name: driver
+    port: 28015
+    protocol: TCP
+    targetPort: 28015
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
