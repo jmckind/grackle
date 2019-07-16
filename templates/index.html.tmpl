@@ -115,7 +115,7 @@
 
         function openConnection() {
             setConnectionStatus("warning", "Connecting...");
-            sck = new WebSocket("ws://0.0.0.0:8000/sock");
+            sck = new WebSocket("ws://" + location.host + "/sock");
             sck.onopen = handleSocketOpen;
             sck.onerror = handleSocketError;
             sck.onclose = handleSocketClose;
