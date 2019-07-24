@@ -42,6 +42,7 @@ metadata:
     app: rethinkdb
     cluster: grackle
     environment: demo
+    component: driver
 spec:
   type: ClusterIP
   selector:
@@ -57,3 +58,25 @@ spec:
   sessionAffinityConfig:
     clientIP:
       timeoutSeconds: 10800
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grackle-rethinkdb-admin
+  namespace: grackle
+  labels:
+    app: rethinkdb
+    cluster: grackle
+    environment: demo
+    component: http
+spec:
+  type: NodePort
+  selector:
+    app: rethinkdb
+    cluster: grackle
+    environment: demo
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
