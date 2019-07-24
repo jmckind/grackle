@@ -44,7 +44,7 @@ credentials.
 Update the Secret manifest `deploy/secret.yaml` with the credentials and remember that the value must be base64 encoded.
 
 ```bash
-echo "my-twitter-access-token" | base64 -
+echo -n "my-twitter-access-token" | base64 -
 ```
 
 Create the secret resource in the new namespace.
