@@ -1,6 +1,6 @@
 .PHONY: build
 
-DOCKER_IP ?= 172.17.0.1
+DOCKER_IP  ?= 172.17.0.1
 IMAGE_REPO ?= quay.io/jmckind
 IMAGE_NAME ?= grackle
 IMAGE_TAG  ?= latest
