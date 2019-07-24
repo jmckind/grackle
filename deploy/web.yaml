@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: grackle
-        image: jmckind/grackle:latest
+        image: quay.io/jmckind/grackle:latest
         command:
           - /grackle-web
         env:
