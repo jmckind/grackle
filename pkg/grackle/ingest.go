@@ -15,11 +15,23 @@
 package grackle
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/ChimeraCoder/anaconda"
+	"github.com/prometheus/client_golang/prometheus"
+    "github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	r "gopkg.in/rethinkdb/rethinkdb-go.v5"
+)
+
+var (
+	tweetsProcessed = promauto.NewCounter(prometheus.CounterOpts{
+			Name: "grackle_processed_tweets_total",
+			Help: "The total number of processed tweets",
+	})
 )
 
 // IngestApp represents the Ingest process.
@@ -56,6 +68,9 @@ func (a *IngestApp) Start() {
 	a.log.Debug("starting application")
 	logVersion(a.log)
 
+	a.log.Debug("serving metrics")
+	a.serveMetrics()
+
 	a.log.Debug("connecting to rethinkdb")
 	s, err := connectRethinkDB(a.opts.RethinkDB)
 	if err != nil {
@@ -88,6 +103,7 @@ func (a *IngestApp) ingestStream() {
 		case anaconda.Tweet:
 			a.log.Tracef("%-15s: %s", o.User.ScreenName, o.Text)
 			a.saveTweet(o)
+			tweetsProcessed.Inc()
 		}
 	}
 }
@@ -101,4 +117,10 @@ func (a *IngestApp) saveTweet(tweet anaconda.Tweet) {
 	if err != nil {
 		a.log.Error("unable to save tweet", err)
 	}
+}
+
+// serveMetrics will start a listening Prometheus metrics endpoint.
+func (a *IngestApp) serveMetrics() {
+	http.Handle(DefaultMetricsEdpoint, promhttp.Handler())
+	go http.ListenAndServe(fmt.Sprintf(":%d", DefaultMetricsPort), nil)
 }

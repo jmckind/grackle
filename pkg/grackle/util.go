@@ -23,6 +23,12 @@ import (
 const (
 	// EnvLogLevel is the log level environment variable.
 	EnvLogLevel = "GRK_LOG_LEVEL"
+
+	// DefaultMetricsEdpoint is the default endpoint name for application metrics.
+	DefaultMetricsEdpoint = "/metrics"
+
+	// DefaultMetricsPort is the default port for application metrics.
+	DefaultMetricsPort = 8774
 )
 
 // newLogger will return a properly configured logger.
