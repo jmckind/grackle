@@ -1,9 +1,11 @@
 # Golang image for building the binary
 FROM golang:alpine AS builder
 
+# Copy artifacts
 WORKDIR /go/src/github.com/jmckind/grackle
 COPY ./ ./
 
+# Compile go binaries
 RUN set -x && \ 
     apk add --no-cache git ca-certificates && \
     GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -a -o grackle-ingest cmd/ingest/main.go && \
