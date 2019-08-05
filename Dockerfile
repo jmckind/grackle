@@ -12,12 +12,28 @@ RUN set -x && \
     GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -a -o grackle-web cmd/web/main.go && \
     ls -lh ./grackle-*
 
-# Minimal image for final binary
-FROM scratch
+# Universal base image for release image
+FROM registry.access.redhat.com/ubi7/ubi-minimal:latest
 
+# Setup environment and working directory
+ENV USER_UID=1001 \
+    USER_NAME=grackle \
+    USER_HOME=/opt/grackle
+WORKDIR /
+
+# Copy builder artifacts
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/src/github.com/jmckind/grackle/grackle-* /
+
+# Copy static artifacts
+COPY bin/entrypoint.sh /entrypoint
 COPY templates/* /templates/
 
-WORKDIR /
-CMD [ "/grackle-web" ]
+# Setup application user
+RUN mkdir -p ${USER_HOME} && \
+    chown ${USER_UID}:0 ${USER_HOME} && \
+    chmod ug+rwx ${USER_HOME} && \
+    chmod g+rw /etc/passwd
+
+# Set entrypoint 
+ENTRYPOINT ["/entrypoint"]
