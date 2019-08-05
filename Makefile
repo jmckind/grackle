@@ -27,7 +27,7 @@ docker-push:
 	docker push $(IMAGE_URL)
 
 run-docker-grackle-web:
-	docker run -it -p 8000:8000 $(IMAGE_URL) /grackle-web --rethinkdb-host $(DOCKER_IP)
+	docker run -it -p 8000:8000 $(IMAGE_URL) /grackle-web --rethinkdb-host $(DOCKER_IP) --log-level debug
 
 run-local-ingest:
 	$(GO_CMD) run cmd/ingest/main.go
